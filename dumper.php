@@ -225,8 +225,15 @@ abstract class Shuttle_Dumper {
 			return $this->include_tables;
 		}
 
-		$tables = $this->db->fetch_numeric('
+		// This code causes errors later in the array structure since this includes the "VIEWS" also.
+		/*$tables = $this->db->fetch_numeric('
 			SHOW TABLES LIKE "' . $this->db->escape_like($table_prefix) . '%"
+		');*/
+		
+		//CVIPUL - Edited code to return only the "BASE TABLES"
+		//TODO - Allow views also, by editing the function get_create_table_sql (@line 343)
+		$tables = $this->db->fetch_numeric('
+			SHOW FULL TABLES WHERE Table_Type = "BASE TABLE" AND Tables_in_'.$this->db->name.' LIKE "' . $this->db->escape_like($table_prefix) . '%"
 		');
 
 		$tables_list = array();
